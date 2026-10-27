@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>StepFit Pro</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #101827;
+  color: white;
+}
+
+header {
+  padding: 25px 20px;
+  background: linear-gradient(135deg, #172554, #075985);
+  border-radius: 0 0 28px 28px;
+}
+
+.brand {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.brand span {
+  color: #67e8f9;
+}
+
+.subtitle {
+  color: #cbd5e1;
+  margin-top: 8px;
+}
+
+.container {
+  padding: 18px;
+  max-width: 520px;
+  margin: auto;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  border: 1px solid #334155;
+}
+
+.label {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.steps {
+  font-size: 48px;
+  font-weight: bold;
+  margin: 12px 0;
+}
+
+.goal {
+  color: #67e8f9;
+  font-size: 14px;
+}
+
+.track {
+  background: #334155;
+  height: 10px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #06b6d4, #34d399);
+  transition: width .3s;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 18px;
+  padding: 18px 12px;
+}
+
+.icon {
+  font-size: 26px;
+}
+
+.value {
+  font-size: 25px;
+  font-weight: bold;
+  margin: 10px 0 5px;
+}
+
+button {
+  width: 100%;
+  border: none;
+  padding: 15px;
+  border-radius: 13px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.primary {
+  background: #06b6d4;
+  color: #082f49;
+}
+
+.secondary {
+  background: #334155;
+  color: white;
+}
+
+input {
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: white;
+  font-size: 17px;
+  margin-top: 10px;
+}
+
+.note {
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.status {
+  color: #67e8f9;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+footer {
+  text-align: center;
+  color: #64748b;
+  padding: 20px;
+  font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">👟 StepFit <span>PRO</span></div>
+  <div class="subtitle">तुमच्या आरोग्याची रोजची नवी सुरुवात!</div>
+</header>
+
+<main class="container">
+
+  <div class="card">
+    <div class="label">आजची एकूण पावले</div>
+    <div class="steps" id="steps">0</div>
+    <div class="goal" id="goalText">दैनिक लक्ष्य: 8,000 पावले</div>
+
+    <div class="track">
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <p id="percent">लक्ष्याच्या दिशेने सुरुवात करा!</p>
+
+    <button class="primary" id="sensorBtn" onclick="startSensor()">
+      📱 ऑटो स्टेप काउंटर सुरू करा
+    </button>
+
+    <button class="secondary" onclick="addSteps()">
+      + 100 पावले जोडा
+    </button>
+
+    <div class="status" id="status">
+      मोबाईल सेन्सर सुरू करण्यासाठी वरील बटण दाबा.
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="stat">
+      <div class="icon">📍</div>
+      <div class="label">अंतर</div>
+      <div class="value" id="distance">0.00</div>
+      <div class="label">किलोमीटर</div>
+    </div>
+
+    <div class="stat">
+      <div class="icon">🔥</div>
+      <div class="label">अंदाजे कॅलरी</div>
+      <div class="value" id="calories">0</div>
+      <div class="label">kcal</div>
+    </div>
+
+    <div class="stat">
+      <div class="icon">⏱️</div>
+      <div class="label">आजची पावले</div>
+      <div class="value" id="todaySteps">0</div>
+      <div class="label">एकूण</div>
+    </div>
+
+    <div class="stat">
+      <div class="icon">🏆</div>
+      <div class="label">लक्ष्य पूर्ण</div>
+      <div class="value" id="achievement">0%</div>
+      <div class="label">दैनिक प्रगती</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>⚙️ तुमचे दैनिक लक्ष्य</h3>
+
+    <div class="label">दररोज किती पावले चालायची आहेत?</div>
+
+    <input id="goalInput" type="number"
+      min="100" max="100000" value="8000">
+
+    <button class="primary" onclick="saveGoal()">
+      लक्ष्य सेव्ह करा
+    </button>
+  </div>
+
+  <div class="card">
+    <h3>📊 तुमची आरोग्य माहिती</h3>
+
+    <div class="label">वजन (किलोग्रॅम)</div>
+    <input id="weightInput" type="number"
+      min="20" max="300" value="70">
+
+    <div class="label" style="margin-top:15px">
+      एका पावलाचे अंदाजे अंतर (मीटर)
+    </div>
+
+    <input id="strideInput" type="number"
+      min="0.2" max="1.5" step="0.01" value="0.75">
+
+    <button class="primary" onclick="saveSettings()">
+      माहिती सेव्ह करा
+    </button>
+
+    <p class="note">
+      अंतर आणि कॅलरी हे अंदाज आहेत. प्रत्यक्ष परिणाम
+      तुमचे वजन, चालण्याचा वेग आणि पावलांच्या लांबीवर अवलंबून असतात.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>🔄 आजची मोजणी</h3>
+    <p class="note">
+      आजची पावले शून्य करायची असतील तर खालील बटण वापरा.
+      ही कृती केल्यानंतर आजची जतन केलेली मोजणी मिटेल.
+    </p>
+
+    <button class="secondary" onclick="resetSteps()">
+      आजची पावले रीसेट करा
+    </button>
+  </div>
+
+</main>
+
+<footer>
+  StepFit Pro · निरोगी जीवन, आनंदी जीवन 💚
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function todayKey() {
+  const d = new Date();
+  return d.getFullYear() + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    String(d.getDate()).padStart(2, "0");
+}
+
+function loadData() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("stepfitData"));
+    if (saved && saved.date === todayKey()) return saved;
+  } catch (e) {}
+  return {
+    date: todayKey(),
+    steps: 0,
+    goal: 8000,
+    weight: 70,
+    stride: 0.75
+  };
+}
+
+let data = loadData();
+let lastPeak = 0;
+let lastStepTime = 0;
+let sensorActive = false;
+
+$("goalInput").value = data.goal;
+$("weightInput").value = data.weight;
+$("strideInput").value = data.stride;
+
+function saveData() {
+  data.date = todayKey();
+  localStorage.setItem("stepfitData", JSON.stringify(data));
+}
+
+function render() {
+  const steps = data.steps;
+  const goal = Math.max(1, data.goal);
+  const percent = Math.floor(steps / goal * 100);
+  const km = steps * data.stride / 1000;
+
+  // अंदाजे कॅलरी: चालण्याचे अंतर आणि वजन यावर आधारित
+  const calories = km * data.weight * 0.5;
+
+  $("steps").textContent = steps.toLocaleString("en-IN");
+  $("todaySteps").textContent = steps.toLocaleString("en-IN");
+  $("distance").textContent = km.toFixed(2);
+  $("calories").textContent = Math.round(calories);
+  $("achievement").textContent = Math.min(100, percent) + "%";
+  $("goalText").textContent =
+    "दैनिक लक्ष्य: " + goal.toLocaleString("en-IN") + " पावले";
+  $("progress").style.width = Math.min(100, percent) + "%";
+  $("percent").textContent = percent >= 100
+    ? "🎉 अभिनंदन! तुमचे दैनिक लक्ष्य पूर्ण झाले!"
+    : percent + "% लक्ष्य पूर्ण · चालत राहा!";
+}
+
+function addSteps() {
+  data.steps += 100;
+  saveData();
+  render();
+}
+
+function saveGoal() {
+  const goal = Number($("goalInput").value);
+  if (!Number.isFinite(goal) || goal < 100 || goal > 100000) {
+    alert("कृपया 100 ते 100000 मधील योग्य लक्ष्य टाका.");
+    return;
+  }
+  data.goal = Math.round(goal);
+  saveData();
+  render();
+  alert("तुमचे दैनिक लक्ष्य सेव्ह झाले!");
+}
+
+function saveSettings() {
+  const weight = Number($("weightInput").value);
+  const stride = Number($("strideInput").value);
+
+  if (weight < 20 || weight > 300 ||
+      stride < 0.2 || stride > 1.5) {
+    alert("कृपया वजन आणि पावलांचे अंतर योग्य भरा.");
+    return;
+  }
+
+  data.weight = weight;
+  data.stride = stride;
+  saveData();
+  render();
+  alert("तुमची माहिती सेव्ह झाली!");
+}
+
+function resetSteps() {
+  if (!confirm("आजची सर्व पावले शून्य करायची आहेत का?")) return;
+  data.steps = 0;
+  saveData();
+  render();
+}
+
+function detectStep(event) {
+  if (!sensorActive || !event.accelerationIncludingGravity) return;
+
+  const a = event.accelerationIncludingGravity;
+  if (a.x == null || a.y == null || a.z == null) return;
+
+  const magnitude = Math.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+  const now = Date.now();
+
+  // साधे हालचाल-आधारित अंदाज; प्रत्येक पाऊल अचूक ओळखले जाईलच असे नाही.
+  if (magnitude > 12 && lastPeak <= 12 && now - lastStepTime > 300) {
+    data.steps++;
+    lastStepTime = now;
+    saveData();
+    render();
+  }
+
+  lastPeak = magnitude;
+}
+
+async function startSensor() {
+  if (!("DeviceMotionEvent" in window)) {
+    $("status").textContent =
+      "या ब्राउझरमध्ये हालचाल सेन्सर उपलब्ध नाही. +100 पावले वापरून पाहा.";
+    return;
+  }
+
+  try {
+    if (typeof DeviceMotionEvent.requestPermission === "function") {
+      const permission = await DeviceMotionEvent.requestPermission();
+      if (permission !== "granted") {
+        $("status").textContent = "सेन्सर वापरण्याची परवानगी मिळाली नाही.";
+        return;
+      }
+    }
+
+    window.addEventListener("devicemotion", detectStep);
+    sensorActive = true;
+    $("status").textContent =
+      "सेन्सर सुरू आहे. मोबाईल सोबत घेऊन चालून पाहा.";
+    $("sensorBtn").textContent = "✅ स्टेप काउंटर सुरू आहे";
+  } catch (e) {
+    $("status").textContent =
+      "सेन्सर सुरू झाला नाही. HTTPS पेजवर पुन्हा प्रयत्न करा.";
+  }
+}
+
+render();
+</script>
+
+</body>
+  </html>
